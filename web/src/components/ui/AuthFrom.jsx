@@ -61,7 +61,7 @@ export default function AuthForm({ type = "login" }) {
   };
 
   return (
-    <div className="min-h-full max-w-xl w-full flex items-center bg-amber-50/40 rounded-2xl justify-center px-4">
+    <div className="min-h-full max-w-lg w-full flex items-center bg-amber-50/40 rounded-2xl justify-center px-4">
         <div className="p-8 md:p-10 text-center">
           <h2 className="text-4xl font2 font-bold text-zinc-800">
             {isLogin ? "Login" : "Create Account"}

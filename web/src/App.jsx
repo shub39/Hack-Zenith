@@ -1,4 +1,4 @@
-import Header from "./components/Header";
+import { Link } from "react-router-dom";
 import Button from "./components/ui/Button.jsx";
 import { ArrowRight } from "lucide-react";
 import ChangeText from "./components/ui/ChangeText.jsx";
@@ -29,8 +29,12 @@ function App() {
           </p>
 
           <div className="group flex mt-8 justify-center gap-4">
-            <Button text="Post your first issue" variant="roundb" icon={ArrowRight}  iconPosition="right" />
-            <Button text="Login & Explore" variant="round" icon={ArrowRight}  iconPosition="right" />
+            <Link to="/auth/register">
+              <Button text="Post your first issue" variant="roundb" icon={ArrowRight}  iconPosition="right" />
+            </Link>
+            <Link to="/auth/login">
+              <Button text="Login & Explore" variant="round" icon={ArrowRight}  iconPosition="right" />
+            </Link>
           </div>
         </div>
       </div>

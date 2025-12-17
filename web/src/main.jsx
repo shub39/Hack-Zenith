@@ -6,6 +6,12 @@ import App from './App';
 import Layout01 from './layout/Layout1';
 import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage';
+import Layout2 from './layout/Layout2';
+import Index from './pages/IndexPage';
+import NotFound from './pages/NotFound';
+import ReportPage from './pages/ReportPage';
+import AllissuePage from './pages/AllissuePage';
+import ViewPage from './pages/ViewPage';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +23,17 @@ const router = createBrowserRouter([
       { path: 'auth/register', element: <Register /> }
     ]
   },
+  {
+    path: 'index',
+    element: <Layout2 />,
+    children: [
+      { index: true, element: <Index /> },
+      { path: "/index/report", element: <ReportPage /> },
+      { path: "/index/all-issues", element: <AllissuePage /> },
+      { path: "/index/post/:id", element: <ViewPage />},
+      { path: "*", element: <NotFound />}
+    ]
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

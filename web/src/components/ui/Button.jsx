@@ -13,8 +13,8 @@ export default function Button({
     default: "bg-white text-black border border-gray-300 hover:bg-gray-100",
     dark: "bg-zinc-900 text-white hover:bg-black rounded-lg shadow-md w-full items-center justify-center",
     delete: "bg-red-500/80 border border-red-500 hover:bg-red-500",
-    free: "border-none text-zinc-800 hover:text-red-800 bg-transparent",
-    roundb: "bg-zinc-800 text-white rounded-full border border-black hover:bg-black shadow-lg",
+    free: "border-none text-zinc-800 hover:text-red-800 bg-transparent w-full",
+    roundb: "bg-zinc-900 text-white rounded-full border border-black hover:bg-black shadow-lg",
     round: "bg-white text-zinc-900 border border-gray-300 rounded-full hover:bg-gray-100 shadow",
   };
 
