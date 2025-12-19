@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Home, AlertTriangle, ListChecks, User, Settings, PlusCircle, GoalIcon, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
+import { useIssueModal } from "../context/IssueModalContext";
+import IssueUploadModal from "./IssueUpload";
 
 const NAV_ITEMS = [
-  { name: "Home", path: "/index", icon: Home },
+  { name: "Home", path: "/index", icon: Home, end: true },
   { name: "My Report", path: "/index/report", icon: AlertTriangle },
   { name: "All Issues", path: "/index/all-issues", icon: ListChecks },
   { name: "Profile", path: "/index/profile", icon: User },
@@ -13,6 +15,9 @@ const NAV_ITEMS = [
 ];
 
 export default function SideNav() {
+
+  const [open, setOpen] = useState(false);
+
   return (
     <aside className="h-screen flex flex-col justify-between py-6 px-2 w-54 lg:w-64">
         <div className="">
@@ -30,6 +35,7 @@ export default function SideNav() {
                 <NavLink
                     key={name}
                     to={path}
+                    end
                     className={({ isActive }) =>
                     `text-left rounded-4xl py-1.5 
                     ${isActive
@@ -44,8 +50,14 @@ export default function SideNav() {
         </div>
 
         <div className="p-0">
-            <Button text="Create issue" variant="dark" iconPosition="right" icon={Upload} />
+            <Button text="Create issue" variant="dark" iconPosition="right" icon={Upload} onClick={() => setOpen(true)} />
         </div>
+
+        <IssueUploadModal
+            open={open}
+            onClose={() => setOpen(false)}
+            onSubmit={(data) => console.log(data)}
+        />
     </aside>
   );
 }

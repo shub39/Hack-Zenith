@@ -71,7 +71,7 @@ export default function AuthForm({ type = "login" }) {
           </p>
 
           {error && (
-            <div className="mt-4">
+            <div className="mt-4 font2">
               <Message type="error" message={error} />
             </div>
           )}

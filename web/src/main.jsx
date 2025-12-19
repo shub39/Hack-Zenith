@@ -12,6 +12,9 @@ import NotFound from './pages/NotFound';
 import ReportPage from './pages/ReportPage';
 import AllissuePage from './pages/AllissuePage';
 import ViewPage from './pages/ViewPage';
+import ProfilePage from './pages/ProfilePage';
+import { IssueModalProvider } from './context/IssueModalContext';
+import NotificationsPage from './pages/NotificationsPage';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +34,8 @@ const router = createBrowserRouter([
       { path: "/index/report", element: <ReportPage /> },
       { path: "/index/all-issues", element: <AllissuePage /> },
       { path: "/index/post/:id", element: <ViewPage />},
+      { path: "/index/profile", element: <ProfilePage />},
+      { path: "/index/notifications", element: <NotificationsPage />},
       { path: "*", element: <NotFound />}
     ]
   }
@@ -38,6 +43,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <IssueModalProvider>
+      <RouterProvider router={router} />
+    </IssueModalProvider>
   </React.StrictMode>
 );
