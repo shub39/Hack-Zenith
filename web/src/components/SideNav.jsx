@@ -22,7 +22,7 @@ export default function SideNav() {
     <aside className="h-screen flex flex-col justify-between py-6 px-2 w-54 lg:w-64">
         <div className="">
             <div className="flex items-left px-4 gap-3">
-                <Link to="/">
+                <Link to="/index">
                     <div className="logo font2 flex items-center gap-2">
                         <GoalIcon className="inline-block w-7 h-7 text-zinc-800" />
                         <h1 className="text-zinc-800 text-3xl font-extrabold">FindIn</h1>
