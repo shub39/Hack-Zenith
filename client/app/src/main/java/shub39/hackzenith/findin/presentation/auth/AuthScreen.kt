@@ -1,26 +1,29 @@
 package shub39.hackzenith.findin.presentation.auth
 
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import org.koin.compose.viewmodel.koinViewModel
 import shub39.hackzenith.findin.viewmodel.AuthViewModel
 
+
+
 @Composable
 fun SignInScreen(
-    viewModel: AuthViewModel = koinViewModel()
+    viewModel: AuthViewModel = koinViewModel(),
+    onNavigateToMainPage: () -> Unit
 ) {
-    val context = LocalContext.current
+    val state by viewModel.authState.collectAsStateWithLifecycle()
 
     val signInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -34,41 +37,23 @@ fun SignInScreen(
         }
     }
 
-    // Handle auth state changes
-    LaunchedEffect(viewModel.authState) {
-        when (val state = viewModel.authState) {
-            is AuthState.Success -> {
-                Toast.makeText(
-                    context,
-                    "Welcome ${state.userName}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            is AuthState.Error -> {
-                Toast.makeText(
-                    context,
-                    state.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-                viewModel.resetAuthState()
-            }
-            else -> {}
-        }
-    }
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        when (val state = viewModel.authState) {
+        when (state) {
             is AuthState.Loading -> {
                 CircularProgressIndicator()
             }
 
             is AuthState.Success -> {
+                LaunchedEffect(Unit) {
+                    onNavigateToMainPage()
+                }
+
                 SignedInContent(
-                    userName = state.userName,
-                    email = state.email,
+                    userName = (state as AuthState.Success).userName,
+                    email = (state as AuthState.Success).email,
                     onSignOut = { viewModel.signOut() }
                 )
             }

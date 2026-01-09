@@ -1,5 +1,10 @@
 package shub39.hackzenith.findin.presentation.auth
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+
+@Stable
+@Immutable
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()

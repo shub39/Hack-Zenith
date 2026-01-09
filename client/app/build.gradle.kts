@@ -2,7 +2,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     id("com.google.gms.google-services") version "4.4.4" apply true
+    id("com.google.devtools.ksp") version "2.3.4"
+    id("de.jensklingenberg.ktorfit") version "2.7.1"
+}
+
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
 }
 
 android {
@@ -61,8 +68,12 @@ dependencies {
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.compose.viewmodel.navigation)
 
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation("com.github.skydoves:landscapist-coil:2.8.2")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("de.jensklingenberg.ktorfit:ktorfit-lib:2.7.1")
 }

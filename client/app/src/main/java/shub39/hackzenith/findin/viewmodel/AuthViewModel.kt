@@ -18,9 +18,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import shub39.hackzenith.findin.R
+import shub39.hackzenith.findin.domain.UserDto
 import shub39.hackzenith.findin.presentation.auth.AuthState
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
+class AuthViewModel(application: Application, private val user: User) : AndroidViewModel(application) {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     var authState = _authState.asStateFlow()
@@ -49,6 +50,16 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val currentUser = auth.currentUser
         _authState.update {
             if (currentUser != null) {
+                user.firebaseUser.update {
+                    UserDto(
+                        uid = currentUser.uid,
+                        email = currentUser.email ?: "",
+                        name = currentUser.displayName ?: "Anon",
+                        photoURL = currentUser.photoUrl.toString(),
+                        phone = currentUser.phoneNumber,
+                    )
+                }
+                Log.d(TAG, "checkAuthState: ${currentUser.displayName}")
                 AuthState.Success(currentUser.displayName, currentUser.email)
             } else {
                 AuthState.Idle
