@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -29,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
@@ -53,7 +55,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -77,7 +78,7 @@ fun MainPage(
     state: MainPageState,
     onAction: (MainPageAction) -> Unit
 ) {
-    var currentScreen: Routes by remember { mutableStateOf(Routes.Home) }
+    var currentScreen by remember { mutableStateOf<Routes>(Routes.Home) }
     var showPostMaker by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -90,32 +91,26 @@ fun MainPage(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showPostMaker = true }) {
-                Icon(painterResource(R.drawable.add), contentDescription = "Add Post")
+            FloatingActionButton(
+                onClick = { showPostMaker = true },
+                shape = CircleShape
+            ) {
+                Icon(painterResource(R.drawable.add), null)
             }
         }
     ) { paddingValues ->
-        AnimatedContent(
-            targetState = currentScreen
-        ) {
+        AnimatedContent(targetState = currentScreen) {
             Column(modifier = Modifier.padding(paddingValues)) {
                 when (it) {
-                    Routes.Home -> {
-                        PostList(posts = state.posts)
-                    }
-
-                    Routes.Profile -> {
-
-                    }
+                    Routes.Home -> PostList(posts = state.posts)
+                    Routes.Profile -> {}
                 }
             }
         }
     }
 
     if (showPostMaker) {
-        ModalBottomSheet(
-            onDismissRequest = { showPostMaker = false }
-        ) {
+        ModalBottomSheet(onDismissRequest = { showPostMaker = false }) {
             CreatePostForm(
                 onDismiss = { showPostMaker = false },
                 onSubmit = { type, title, description, location, tags, images ->
@@ -129,7 +124,7 @@ fun MainPage(
                                 area = location.area
                             ),
                             tags = tags,
-                            images = images,
+                            images = images
                         )
                     )
                     showPostMaker = false
@@ -143,13 +138,16 @@ fun MainPage(
 @Composable
 fun TopBar() {
     TopAppBar(
-        title = { Text("FindIn") },
+        title = {
+            Text(
+                text = "FindIn",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+        },
         actions = {
-            IconButton(onClick = { /* Handle notification click */ }) {
-                Icon(
-                    painterResource(R.drawable.notifications),
-                    contentDescription = "Notifications"
-                )
+            IconButton(onClick = {}) {
+                Icon(painterResource(R.drawable.notifications), null)
             }
         }
     )
@@ -159,11 +157,11 @@ fun TopBar() {
 fun PostList(posts: List<Post>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 60.dp),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(posts) { post ->
-            PostCard(post = post)
+            PostCard(post)
         }
     }
 }
@@ -172,7 +170,8 @@ fun PostList(posts: List<Post>) {
 fun PostCard(post: Post) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
             Row(
@@ -183,47 +182,104 @@ fun PostCard(post: Post) {
                     imageModel = { post.user.avatar },
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(text = post.user.name, fontWeight = FontWeight.Bold)
-                    Text(text = post.location.area, color = Color.Gray, fontSize = 12.sp)
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = post.types,
-                    color = if (post.types == "lost") Color.Red else Color.Blue,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
 
+                Spacer(Modifier.width(8.dp))
+
+                Column {
+                    Text(
+                        text = post.user.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = post.location.area,
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                Text(
+                    text = post.types.uppercase(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (post.types == "lost") Color(0xFFD32F2F) else Color(0xFF1976D2),
+                    modifier = Modifier
+                        .background(
+                            if (post.types == "lost")
+                                Color(0xFFFDECEA)
+                            else
+                                Color(0xFFE3F2FD),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 )
             }
+
             post.images.firstOrNull()?.let {
                 CoilImage(
                     imageModel = { it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(12.dp)),
                 )
             }
+
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = post.title, style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = post.location.place, style = MaterialTheme.typography.bodyMedium)
-                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = post.title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = post.location.place,
+                    fontSize = 13.sp,
+                    color = Color.Gray
+                )
+
+                Spacer(Modifier.height(8.dp))
+
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     post.tags.forEach { tag ->
-                        Text(text = tag, color = Color.Gray, fontSize = 12.sp)
+                        Text(
+                            text = "#$tag",
+                            fontSize = 12.sp,
+                            color = Color.Gray,
+                            modifier = Modifier
+                                .background(
+                                    Color(0xFFF2F2F2),
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painterResource(R.drawable.share), contentDescription = "Share")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = { /*TODO*/ }) {
+
+                Spacer(Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painterResource(R.drawable.share),
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Button(
+                        onClick = {},
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
                         Text(if (post.types == "lost") "Contact" else "Details")
                     }
                 }
@@ -239,14 +295,14 @@ fun BottomNavBar(
 ) {
     NavigationBar {
         NavigationBarItem(
-            icon = { Icon(painterResource(R.drawable.home), contentDescription = "Home") },
-            label = { Text("Home") },
+            icon = { Icon(painterResource(R.drawable.home), null) },
+            label = { Text("Home", fontSize = 11.sp) },
             selected = currentRoute is Routes.Home,
             onClick = { onRouteChange(Routes.Home) }
         )
         NavigationBarItem(
-            icon = { Icon(painterResource(R.drawable.settings), contentDescription = "Settings") },
-            label = { Text("Settings") },
+            icon = { Icon(painterResource(R.drawable.settings), null) },
+            label = { Text("Settings", fontSize = 11.sp) },
             selected = currentRoute is Routes.Profile,
             onClick = { onRouteChange(Routes.Profile) }
         )
