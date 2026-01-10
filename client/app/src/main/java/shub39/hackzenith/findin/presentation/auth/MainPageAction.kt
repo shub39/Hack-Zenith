@@ -11,4 +11,6 @@ sealed interface MainPageAction {
         val location: LocationDto,
         val tags: List<String> = emptyList(),
     ): MainPageAction
+
+    data object Refresh: MainPageAction
 }

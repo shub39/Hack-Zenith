@@ -83,12 +83,18 @@ fun MainPage(
 
     Scaffold(
         modifier = modifier,
-        topBar = { TopBar() },
-        bottomBar = {
-            BottomNavBar(
-                currentRoute = currentScreen,
-                onRouteChange = { currentScreen = it }
+        topBar = {
+            TopBar(
+                onRefresh = {
+                    onAction(MainPageAction.Refresh)
+                }
             )
+        },
+        bottomBar = {
+//            BottomNavBar(
+//                currentRoute = currentScreen,
+//                onRouteChange = { currentScreen = it }
+//            )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -103,7 +109,9 @@ fun MainPage(
             Column(modifier = Modifier.padding(paddingValues)) {
                 when (it) {
                     Routes.Home -> PostList(posts = state.posts)
-                    Routes.Profile -> {}
+                    Routes.Profile -> {
+
+                    }
                 }
             }
         }
@@ -136,7 +144,9 @@ fun MainPage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopBar(
+    onRefresh: () -> Unit
+) {
     TopAppBar(
         title = {
             Text(
@@ -146,8 +156,8 @@ fun TopBar() {
             )
         },
         actions = {
-            IconButton(onClick = {}) {
-                Icon(painterResource(R.drawable.notifications), null)
+            IconButton(onClick = onRefresh) {
+                Icon(painterResource(R.drawable.refresh), null)
             }
         }
     )

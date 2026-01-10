@@ -1,7 +1,6 @@
 package shub39.hackzenith.findin.viewmodel
 
 import android.content.ContentResolver
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,6 +25,7 @@ import kotlinx.serialization.json.Json
 import shub39.hackzenith.findin.domain.createServerApi
 import shub39.hackzenith.findin.presentation.auth.MainPageAction
 import shub39.hackzenith.findin.presentation.main_page.MainPageState
+import androidx.core.net.toUri
 
 class MainPageViewModel(
     private val user: User,
@@ -61,6 +61,14 @@ class MainPageViewModel(
 
     fun onAction(action: MainPageAction) {
         when (action) {
+            MainPageAction.Refresh -> viewModelScope.launch {
+                _state.update {
+                    it.copy(
+                        posts = json.decodeFromString(api.getAllPosts())
+                    )
+                }
+            }
+
             is MainPageAction.PostContent -> viewModelScope.launch {
                 Log.d("MainPageViewModel", "Sending Post")
 
@@ -73,7 +81,7 @@ class MainPageViewModel(
 
                 val images = withContext(Dispatchers.IO) {
                     action.images.mapNotNull { uriString ->
-                        val uri = Uri.parse(uriString)
+                        val uri = uriString.toUri()
                         contentResolver.openInputStream(uri)?.let { inputStream ->
                             val bytes = inputStream.readBytes()
                             PartData.FileItem(
